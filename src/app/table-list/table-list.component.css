@@ -1,0 +1,84 @@
+.search-box,
+.pagination,
+.add-box {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.table-box {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  width: 100%;
+}
+.items {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.item {
+  padding: 10px;
+  width: 300px;
+}
+.item__action {
+  margin-top: 10px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  display: flex;
+  gap: 15px;
+}
+.light {
+  color: #8c8787;
+}
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.326);
+  z-index: 20;
+  transition: 0.3s all;
+}
+.modal {
+  width: 100%;
+  max-width: 500px;
+  min-height: 200px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 30;
+  box-shadow: 0 3px 10px -0.5px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  padding: 30px;
+  border-radius: 3px;
+  background-color: #fff;
+  transition: 0.3s all;
+}
+.modal__info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.modal__info-item {
+  display: flex;
+  justify-content: space-between;
+}
+.form {
+  display: flex;
+  flex-direction: column;
+}

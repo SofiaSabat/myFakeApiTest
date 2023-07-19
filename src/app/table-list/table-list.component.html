@@ -1,0 +1,318 @@
+<div class="search-box">
+  <mat-form-field class="example-full-width">
+    <span matPrefix> </span>
+    <input
+      [(ngModel)]="request"
+      type="tel"
+      matInput
+      placeholder="Search..."
+      name="search"
+    />
+    <button matSuffix mat-button>
+      <mat-icon>search</mat-icon>
+    </button>
+  </mat-form-field>
+</div>
+<div class="add-box">
+  <button matSuffix mat-button (click)="onAdd()">
+    <mat-icon mat-fab color="primary">add</mat-icon>
+  </button>
+</div>
+<p class="items">
+  <mat-card
+    *ngFor="
+      let item of carArr.cars
+        | filter : request
+        | paginate : { itemsPerPage: 15, currentPage: p };
+      let i = index
+    "
+  >
+    <mat-card-content>
+      <div class="item">
+        <div class="item__img">
+          <img mat-card-image src="" alt="" />
+        </div>
+        <div class="item__info info">
+          <div class="info__company">
+            <span class="light">Company: </span>{{ item.car }}
+          </div>
+          <div class="info__model">
+            <span class="light">Model:</span> {{ item.car_model }}
+          </div>
+          <div class="info__vin">
+            <span class="light">VIN:</span> {{ item.car_vin }}
+          </div>
+          <div class="info__color">
+            <span class="light">Color:</span> {{ item.car_color }}
+          </div>
+          <div class="info__year">
+            <span class="light">Year: </span>{{ item.car_model_year }}
+          </div>
+          <div class="info__available">
+            <span class="light"> Is available:</span>
+            <span *ngIf="item.availability; else notAvailable">Available</span>
+            <ng-template #notAvailable>Not available</ng-template>
+          </div>
+
+          <div class="info__price">
+            <span class="light"> Price: </span>
+            {{ item.price }}
+          </div>
+        </div>
+        <mat-divider></mat-divider>
+        <div class="item__action action">
+          <mat-card-actions class="button-container">
+            <button mat-fab color="primary" (click)="onEdit(item)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-fab color="primary" (click)="onDelete(item)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </mat-card-actions>
+        </div>
+      </div>
+    </mat-card-content>
+    <ng-container *ngIf="item.isEditing">
+      <div class="modal">
+        <button mat-icon color="primary" (click)="onClose(item)">
+          <mat-icon>close</mat-icon>
+        </button>
+        <button mat-icon color="primary" (click)="onSave(item)">
+          <mat-icon>done</mat-icon>
+        </button>
+        <div class="modal__info">
+          <div class="modal__info-item">
+            <span class="light">Company: </span>
+            <div>{{ item.car }}</div>
+          </div>
+          <div class="modal__info-item">
+            <span class="light">Model:</span>
+            <div>{{ item.car_model }}</div>
+          </div>
+          <div class="modal__info-item">
+            <span class="light">VIN:</span>
+            <div>{{ item.car_vin }}</div>
+          </div>
+          <div class="modal__info-item">
+            <span class="light">Year: </span>
+            <div>{{ item.car_model_year }}</div>
+          </div>
+          <div class="modal__info-item">
+            <form [formGroup]="editCarForm" class="form">
+              <mat-form-field class="example-full-width">
+                <mat-label>Color</mat-label>
+                <input
+                  matInput
+                  placeholder="Enter color"
+                  value="{{ item.car_color }}"
+                  formControlName="editColor"
+                />
+                <mat-error
+                  *ngIf="
+                    editCarForm.get('editColor')?.invalid &&
+                    editCarForm.get('editColor')?.touched
+                  "
+                >
+                  Color is required
+                </mat-error>
+              </mat-form-field>
+              <mat-form-field class="example-full-width">
+                <mat-label>Price</mat-label>
+                <input
+                  matInput
+                  placeholder="Enter price"
+                  value="{{ item.price }}"
+                  formControlName="editPrice"
+                />
+                <mat-error
+                  *ngIf="
+                    editCarForm.get('editPrice')?.invalid &&
+                    editCarForm.get('editPrice')?.touched
+                  "
+                >
+                  Price is required
+                </mat-error>
+              </mat-form-field>
+              <mat-form-field>
+                <mat-label>is available</mat-label>
+                <mat-select
+                  [(value)]="editAvailability"
+                  formControlName="editAvailability"
+                  autofocus
+                >
+                  <mat-option value="true">Available</mat-option>
+                  <mat-option value="false">Not available</mat-option>
+                </mat-select>
+                <mat-error
+                  *ngIf="
+                    editCarForm.get('editAvailability')?.invalid &&
+                    editCarForm.get('editAvailability')?.touched
+                  "
+                >
+                  Availability is required
+                </mat-error>
+              </mat-form-field>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="overlay" id="overlay-modal"></div>
+    </ng-container>
+  </mat-card>
+</p>
+
+<ng-container *ngIf="isAdding">
+  <div class="modal">
+    <form class="Addform" [formGroup]="addCarForm" #addForm="ngForm">
+      <div class="modal__info">
+        <div class="modal__info-item">
+          <mat-form-field class="example-full-width">
+            <mat-label>Company:</mat-label>
+            <input
+              matInput
+              placeholder="Enter company"
+              formControlName="addCompany"
+              required
+            />
+            <mat-error
+              *ngIf="
+                addCarForm.get('addCompany')?.invalid &&
+                addCarForm.get('addCompany')?.touched
+              "
+            >
+              Please enter a Company name
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="modal__info-item">
+          <mat-form-field class="example-full-width">
+            <mat-label>Model:</mat-label>
+            <input
+              matInput
+              placeholder="Enter model"
+              formControlName="addModel"
+              required
+            />
+            <mat-error
+              *ngIf="
+                addCarForm.get('addModel')?.invalid &&
+                addCarForm.get('addModel')?.touched
+              "
+            >
+              Please enter a model name
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="modal__info-item">
+          <mat-form-field class="example-full-width">
+            <mat-label>VIN:</mat-label>
+            <input
+              matInput
+              placeholder="Enter VIN"
+              formControlName="addVIN"
+              required
+            />
+            <mat-error
+              *ngIf="
+                addCarForm.get('addVIN')?.invalid &&
+                addCarForm.get('addVIN')?.touched
+              "
+            >
+              Please enter a VIN code
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="modal__info-item">
+          <mat-form-field class="example-full-width">
+            <mat-label>Year:</mat-label>
+            <input
+              matInput
+              placeholder="Enter Year"
+              formControlName="addYear"
+              required
+            />
+            <mat-error
+              *ngIf="
+                addCarForm.get('addYear')?.invalid &&
+                addCarForm.get('addYear')?.touched
+              "
+            >
+              Please enter a year
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="modal__info-item">
+          <mat-form-field class="example-full-width">
+            <mat-label>Color:</mat-label>
+            <input
+              matInput
+              placeholder="Enter color"
+              formControlName="addColor"
+              required
+            />
+            <mat-error
+              *ngIf="
+                addCarForm.get('addColor')?.invalid &&
+                addCarForm.get('addColor')?.touched
+              "
+            >
+              Please enter a color
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="modal__info-item">
+          <mat-form-field class="example-full-width">
+            <mat-label>Price:</mat-label>
+            <input
+              matInput
+              placeholder="Enter price"
+              formControlName="addPrice"
+              required
+            />
+            <mat-error
+              *ngIf="
+                addCarForm.get('addPrice')?.invalid &&
+                addCarForm.get('addPrice')?.touched
+              "
+            >
+              Please enter a price
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="modal__info-item">
+          <mat-form-field>
+            <mat-label>Is Available:</mat-label>
+            <mat-select formControlName="addAvailability" required>
+              <mat-option value="true">Available</mat-option>
+              <mat-option value="false">Not available</mat-option>
+            </mat-select>
+            <mat-error
+              *ngIf="
+                addCarForm.get('addAvailability')?.invalid &&
+                addCarForm.get('addAvailability')?.touched
+              "
+            >
+              Please select an option
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="modal__btn">
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="onAddSave()"
+          [disabled]="addCarForm.invalid"
+        >
+          Add Car
+        </button>
+        <button mat-raised-button (click)="onAddClose()">Cancel</button>
+      </div>
+    </form>
+  </div>
+  <div class="overlay" id="overlay-modal"></div>
+</ng-container>
+
+<div class="pagination">
+  <pagination-controls (pageChange)="p = $event"></pagination-controls>
+</div>
